@@ -1,0 +1,4 @@
+mentors:
+    - {name: 'Valentin Kuznetsov', pos: 'Cornell University (US)', email: 'vkuznet@protonmail.com', ht: '50px', wt: '50', link: 'https://avatars1.githubusercontent.com/u/125138?s=400&v=4'}
+    - {name: 'Federica Legger', pos: 'Universita e INFN Torino (IT)', email: 'federica.legger@to.infn.it', ht: '50px', wt: '50',  link: 'https://www.etp.physik.uni-muenchen.de/pics/faces/legger_sm.jpg'}
+    - {name: 'Christian Ariza', pos: 'Universidad de los Andes (CO)', email: 'christian.ariza@gmail.com', ht: '50px', wt: '',  link: 'https://avatars1.githubusercontent.com/u/4405564?s=400&v=4'}

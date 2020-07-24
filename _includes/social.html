@@ -1,8 +1,5 @@
-{% for item in site.data.social.social %}
-  {% if item.type == "brand"%}
-    <a href="{{ item.link }}" target="_blank" id="{{item.icon}}"><i class="fab fa-{{item.icon}}" aria-hidden="true"></i></a>
-  {% endif %}
-  {% if item.type == "solid"%}
-    <a href="{{ item.link }}" target="_blank" id="{{item.icon}}"><i class="fas fa-{{item.icon}}" aria-hidden="true"></i></a>
-  {% endif %} 
-{% endfor %}
+<div style="display: flex;">
+  {% for item in site.data.social.social %}
+    <a style="margin-right: 5px;" href="{{ item.link }}" target="_blank" id="{{item.icon}}"><img src="{{item.icon}}" width="30" /></a>
+  {% endfor %}
+</div>
