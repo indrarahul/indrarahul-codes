@@ -1,3 +1,28 @@
+@font-face{
+    font-family: "helvNeuL";
+    src: url("/assets/fonts/HelveticaNeue Light.ttf") format("truetype");
+}
+
+@font-face{
+    font-family: "helvNeuM";
+    src: url("/assets/fonts/HelveticaNeue Medium.ttf") format("truetype");
+}
+
+@font-face{
+    font-family: "helvNeuB";
+    src: url("/assets/fonts/Helvetica Neu Bold.ttf") format("truetype");
+}
+
+@font-face{
+    font-family: "helvNeu";
+    src: url("/assets/fonts/HelveticaNeue.ttf") format("truetype");
+}
+
+@font-face{
+    font-family: "helvNeuT";
+    src: url("/assets/fonts/HelveticaNeue Thin.ttf") format("truetype");
+}
+
 h1, h2, h3, h4, h5, h6{
     font-family: 'Montserrat', sans-serif;
     margin-bottom: 10px;
@@ -6,14 +31,14 @@ h1, h2, h3, h4, h5, h6{
     a{
         text-decoration: none;
         color: black;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'helvNeuL', sans-serif;
     }
 }
 
 p, ul, ol{
-    font-family: 'PT Serif', serif;
+    font-family: 'helvNeuL', serif;
     li{
-      font-family: 'PT Serif', serif;
+      font-family: 'helvNeuL', serif;
       font-size: 1.15rem;
     }
 }
@@ -37,5 +62,5 @@ p{
 }
 
 a{
-    font-family: 'PT Serif', serif;
+    font-family: 'helvNeuL', serif;
 }

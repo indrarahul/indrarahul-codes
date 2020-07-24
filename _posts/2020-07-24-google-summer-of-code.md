@@ -348,15 +348,20 @@ I am thankful to my mentors for their invaluable guidance and support throught m
 
 ### Mentor details
 
-{% for mentor in site.data.mentor.mentors %}
-- <div style="display:flex; align-items: center;">
-<img style="margin-left:0px; margin-right:10px; border-radius: 100%;"  src="{{mentor.link}}" height="{{mentor.ht}}" width="{{mentor.wt}}" />
- <a style="text-decoration:none;" href="mailto:{{mentor.email}}">{{mentor.name}} : {{mentor.pos}}</a>
+{% for mentor in site.data.people.mentors %}
+ <div class="mentor-detail" style="display:flex;  ">
+<img style="margin-left:0px; margin-right:10px; border-radius: 100%; object-fit: cover;" src="{{mentor.link}}" height="{{mentor.ht}}" width="{{mentor.wt}}" />
+ <a style="text-decoration:none; hover:background-color: yellow;" href="mailto:{{mentor.email}}">{{mentor.name}} <br> {{mentor.pos}}</a>
     </div>
 {% endfor %}
 
 ### Contact Me
-
+{% for mentor in site.data.people.me %}
+ <div class="mentor-detail" style="display:flex; ">
+<img style="margin-left:0px; margin-right:10px; border-radius: 100%; object-fit: cover;" src="{{mentor.link}}" height="{{mentor.ht}}" width="{{mentor.wt}}" />
+ <a style="text-decoration:none; hover:background-color: yellow;" href="mailto:{{mentor.email}}">{{mentor.name}} <br> {{mentor.pos}}</a>
+    </div>
+{% endfor %}
 - Feel free to send me a mail at <a href="mailto:indrarahul2018@gmail.com">indrarahul2018@gmail.com</a>
 - Raise issues if any at:
   - <a target="_blank" href="https://github.com/dmwm/CMSMonitoring">CMSMonitoring</a>
