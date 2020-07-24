@@ -17,6 +17,9 @@ jobs:
       - run:
           name: Bundle Install
           command: gem install bundler
+      - run:
+          name: Jekyll Install
+          command: gem install jekyll
       - save_cache:
           key: rubygems-v1-{{ checksum "Gemfile.lock" }}
           paths:
