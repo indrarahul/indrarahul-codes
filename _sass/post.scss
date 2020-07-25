@@ -38,19 +38,19 @@ img{
 }
 
 .post-container{
-    p, li{
+   .lnk, p, li{
         a{
           text-decoration:none;
           border-bottom: 2px solid $light-grey;
-          box-shadow: inset 0 -4px 0 $light-grey;
-          color: inherit;
+          box-shadow: inset 0 -1px 0 $light-grey;
+          color: #005aae;
           transition: background 0.1s cubic-bezier(.33,.66,.66,1);
         }
         a:visited{
             text-decoration:none;
             border-bottom: 2px solid $light-grey;
-            box-shadow: inset 0 -4px 0 $light-grey;
-            color: inherit;
+            box-shadow: inset 0 -1px 0 $light-grey;
+            color: #621792;
             transition: background 0.1s cubic-bezier(.33,.66,.66,1);
         }
         a:hover{
@@ -58,4 +58,9 @@ img{
         }
       }
       
+}
+
+h4 {
+  font-family:"helvNeuL";
+  color:#005aae;
 }

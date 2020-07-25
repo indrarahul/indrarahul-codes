@@ -1,7 +1,11 @@
 <header id="header">
 	<div id = site_title>
-		<a href="{{ "/"}}">
+		<a href="{{"/"}}">
+			{% if page.main_title %}
+			<h1>{{page.main_title}}</h1>
+			{% else %}
 			<h1>{{site.title}}</h1>
+			{% endif %}
 		</a>
 	</div>
 	<div id="subheader">

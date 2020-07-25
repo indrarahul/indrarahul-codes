@@ -6,7 +6,6 @@
     border-radius: $amount; 
 }
 
-
 .featured-img-container{
     margin-block-start: 1em;
     margin-block-end: 1em;
@@ -15,18 +14,6 @@
         height: auto;
         max-height: 450px;
         @include border(7px);
-    }
-}
-
-.continue-reading{
-    a{
-        color: $base;
-        text-decoration: none;
-        font-style: italic;
-        font-size: 0.96rem;
-    }
-    a:hover{
-        color: black;
     }
 }
 

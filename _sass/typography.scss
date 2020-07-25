@@ -1,6 +1,6 @@
 @font-face{
     font-family: "helvNeuL";
-    src: url("/assets/fonts/HelveticaNeue Light.ttf") format("truetype");
+    src: url("/assets/fonts/HelveticaNeueLt.ttf") format("truetype");
 }
 
 @font-face{
@@ -20,7 +20,7 @@
 
 @font-face{
     font-family: "helvNeuT";
-    src: url("/assets/fonts/HelveticaNeue Thin.ttf") format("truetype");
+    src: url("/assets/fonts/hv/HelveticaNeue-Th.otf") format("truetype");
 }
 
 h1, h2, h3, h4, h5, h6{
@@ -31,7 +31,7 @@ h1, h2, h3, h4, h5, h6{
     a{
         text-decoration: none;
         color: black;
-        font-family: 'helvNeuL', sans-serif;
+        font-family: 'Montserrat', sans-serif;
     }
 }
 
@@ -63,4 +63,9 @@ p{
 
 a{
     font-family: 'helvNeuL', serif;
+}
+
+span {
+    font-family: 'helvNeuL', serif;
+    color: grey;
 }

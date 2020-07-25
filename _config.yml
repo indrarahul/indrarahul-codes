@@ -1,6 +1,5 @@
 # Site settings
 title: Rahul Indra
-gsoc_title: GSOC'20 with CERN-HSF !
 description: ""
 url:  "" # Actual base url of the website
 baseurl: "/"           # url of the jekyll blog. e.g. if you set url to "mysite.com" and baseurl to "blog", the jekyll website will work on "mysite.com/blog"

@@ -1,4 +1,5 @@
 ---
+main_title: GSOC'20 with CERN-HSF !
 title: Intelligent Alert system for HEP experiments
 layout: post
 categories: [GSOC, Intelligent Alert System, golang]
@@ -10,8 +11,10 @@ description: "Google Summer of Code 2020"
 
 Quick Links :-
 
-<a target="_blank" href="https://github.com/dmwm/CMSMonitoring">CMSMonitoring</a> <br>
-<a target="_blank" href="https://docs.google.com/document/d/1ATRWZLzsexHgdx73_PFwNGIUrUaudskSJ-FYnyZOHHw/edit?usp=sharing">GSOC Progress Report</a>
+<div class="lnk" style="display:flex;">
+<a style="margin-right:10px; text-decoration:none;" target="_blank" href="https://github.com/dmwm/CMSMonitoring">CMSMonitoring</a> <br>
+<a style="margin-right:10px; text-decoration:none;" target="_blank" href="https://docs.google.com/document/d/1ATRWZLzsexHgdx73_PFwNGIUrUaudskSJ-FYnyZOHHw/edit?usp=sharing">GSOC Progress Report</a>
+</div>
 
 * hello
 {:toc}
@@ -21,19 +24,19 @@ Quick Links :-
 The growth of distributed services introduces a challenge to properly monitor their status and reduce operational costs.”
 
 Tools in use :-
-ElasticSearch
-Kafka
-Grafana
-Prometheus
-AlertManager
-VictoriaMetrics
-Custom Solutions like GGUS, SSB system etc.
+- ElasticSearch
+- Kafka
+- Grafana
+- Prometheus
+- AlertManager
+- VictoriaMetrics
+- Custom Solutions like GGUS, SSB system etc.
 
 CMS infrastructure can produce significant amount of data on :-
-various anomalies
-intermittent problems
-outages
-scheduled maintenance.
+- various anomalies
+- intermittent problems
+- outages
+- scheduled maintenance.
 
 So, in short our operational teams deal with a large amount of alert notifications and tickets !
 
@@ -50,15 +53,18 @@ Aim
 - automate operation procedures
 
 The system’s abilities include, but are not limited to :-
-Consuming tickets from various ticketing systems. (GGUS & SSB have been implemented). Being modular architecture, there’s always a scope to add more services in future.
-Extracting alerts, relevant to the specific CMS services which gets affected by such interventions
-Intelligently grouping and ranking those alerts.
-Silencing false alerts.
-Making them visible in our monitoring tools (Grafana, Slack, Karma etc.).
+- Consuming tickets from various ticketing systems. (GGUS & SSB have been implemented). Being modular architecture, there’s always a scope to add more services in future.
+- Extracting alerts, relevant to the specific CMS services which gets affected by such interventions
+- Intelligently grouping and ranking those alerts.
+- Silencing false alerts.
+- Making them visible in our monitoring tools (Grafana, Slack, Karma etc.).
 
 ## Proposed Architecture
 
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/full_arch2.png" alt="drawing" width="1200"/>
+<span>Full Architecture</span>
+</div>
 
 Components Developed
 
@@ -80,22 +86,22 @@ Tools
 
 ### GGUS
 
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/ggus_parser.png" alt="drawing" width="300"/>
-GGUS Ticketing System outputs 
-data either in XML or CSV.
-Developed Parser capable of parsing 
-both formats.
+<span>GGUS parser diagram</span>
+</div>
+
+GGUS Ticketing System outputs data either in XML or CSV. Developed Parser capable of parsing both formats.
 ggus_parser has  two components :-
-parse - parses the XML or CSV data
-convert - converts the parsed data
-into JSON format and saves it to disk.
-XML/CSV formats are configurable
+- parse - parses the XML or CSV data
+- convert - converts the parsed data into JSON format and saves it to disk.
+- XML/CSV formats are configurable
 
-GGUS Ticket (csv)
-
+*GGUS Ticket (csv)*
+```CSV
 Ticket-ID,Type,VO,Site,Priority,Resp. Unit,Status,Last Update,Subject,Scope
 147196,USER,cms,FZK-LCG2,urgent,NGI_DE,assigned,2020-07-14,FZK-LCG2: issues on data access,WLCG
-
+```
 Which is Parsed and Converted into …..
 
 GGUS Parsed Ticket (JSON)
@@ -117,14 +123,14 @@ GGUS Parsed Ticket (JSON)
 
 ### SSB
 
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/monit.png" alt="drawing" width="300"/>
+<span>Hello</span>
+</div>
+
 What about SSB Ticketing System ?
 
-There was no need of parser for SSB Ticketing System.
-monit tool was developed by CMS.
-Query InfluxDB/ES data sources in MONIT via Grafana proxy
-SSB alerts in JSON format is given on standard output.
-We piped stdout to .json file and saved to disk.
+There was no need of parser for SSB Ticketing System. monit tool was developed by CMS. Query InfluxDB/ES data sources in MONIT via Grafana proxy SSB alerts in JSON format is given on standard output. We piped stdout to .json file and saved to disk.
 
 Ref :- <a target="_blank" href="https://github.com/dmwm/CMSMonitoring/blob/master/src/go/MONIT/monit.go">monit</a>
 
@@ -133,8 +139,12 @@ Ref :- <a target="_blank" href="https://github.com/dmwm/CMSMonitoring/blob/maste
 `monit -query=$query -dbname=$dbname -token=$token -dbid=$dbid > ssb_data.json`
 
 ## Alerting Module
-
+<br>
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/alert_mod.png" alt="drawing" width="400"/>
+<span>Hello</span>
+</div>
+
 Components Developed
 - fetch
 - convert
@@ -163,17 +173,19 @@ Components Developed
   - All open ending alerts in AlertManager get new EndTime,
   - thus get deleted
 
-## Alerting Service
-
+## Alerting Service 
+<br>
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/alert_srv.png" alt="drawing" width="400"/>
+<span>Hello</span>
+</div>
+
 - Parser fetches data and saves to disk
 - Alerting module gets fetched data as input, converts it and pushes to AM.
 - This whole process is bundled as a Linux Service with three commands :-
     - start
     - stop
     - status
-
-Image beside shows an alerting service architecture
 
 Components
 
@@ -196,8 +208,12 @@ Configuration
   - Token
 
 ## AlertManager - one place for all alerts
-
+<br>
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/am.png" alt="drawing" width="300"/>
+<span>Hello</span>
+</div>
+
 Alerting services which has been developed push GGUS & SSB alerts to AM at defined time interval.
 Grafana & Prometheus push their alerts to AM as well.
 Karma Dashboard fetches all alerts from AM, and displays in better format.
@@ -206,12 +222,12 @@ AM, Slack and Karma give all required info for alerts to our Admins.
 
 ## Use of Slack & Karma
 
-Slack
+#### Slack
 Slack has defined channels for particular service alerts.
 Users are notified about fired alerts.
 AlertManager bots are at work.
 
-Karma
+#### Karma
 A dashboard which pulls all alerts from AM.
 Availability of multi grids arrangement based on filters.
 Bundling similar alerts
@@ -219,8 +235,12 @@ Concise and better view than AM.
 Wrote Dockerfile and Kubernetes config files.
 
 ## Intelligence Module
-
+<br>
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/int_mod.jpg" alt="drawing" width="400"/>
+<span>Hello</span>
+</div>
+
 A data pipeline.
 Components independent of each other.
 One component receives the data, adds its logic and forwards the processed data to other component.
@@ -254,46 +274,70 @@ Tools
 - AlertManager
 - Grafana
 
-**Fetch Alerts**
+#### Fetch Alerts
+
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/fetch_alerts.jpg" alt="drawing" width="250"/>
+<span>Hello</span>
+</div>
 
 - Fetches all alerts from AlertManager
 - Bundles them and put them on a channel.
 - Channel (Analogy) - baggage belt at Airports. You put data into it, data will be picked up when required by other party.
 
-**Preprocessing**
+#### Preprocessing
+
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/preprocessing.jpg" alt="drawing" width="450"/>
+<span>Hello</span>
+</div>
 
 - Filtering based on configuration.
 - Only filtered alerts are forwarded.
 - Here we also manage one map for keeping track of active silenced alerts to avoid redundant silences.
 - If an alert is already silenced that means it has been processed by the intelligence module before.
 
-**Keyword Matching**
+#### Keyword Matching
+
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/keyword_matching.png" alt="drawing" width="350"/>
+<span>Hello</span>
+</div>
 
 - Analysis of Alerts showed us repetitive use of a few important keywords.
 - These keywords help in assigning severity levels.
 - We search for these keywords in alerts, if found we assign severity level mapped to that keyword.
 
-**Add Annotations**
+#### Add Annotations
+
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/add_annotations.jpg" alt="drawing" width="350"/>
+<span>Hello</span>
+</div>
 
 - Grafana has dashboards which shows running services’ metrics in the form of graphs.
 - Grafana has add Annotation feature.
 - SSB alert mentioning intervention in network / DB affects these services.
 - We push such interventions info in the form of annotations into Grafana dashboards.
 
-**Machine Learning**
+#### Machine Learning
 
-**Push Alert**
+#### Push Alert 
+
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/push_alert.jpg" alt="drawing" width="400"/>
+<span>Hello</span>
+</div>
 
 - Alerts with modified information are pushed to AlertManager
 - Incoming alerts are then forwarded to Silence Alert.
 
-**Silence Alert**
+#### Silence Alert 
+
+<div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/silence_alert.jpg" alt="drawing" width="250"/>
+<span>Hello</span>
+</div>
 
 - Alerts which get modified and pushed to AlertManager get copied.
 - Older alert is redundant
@@ -351,7 +395,7 @@ I am thankful to my mentors for their invaluable guidance and support throught m
 {% for mentor in site.data.people.mentors %}
  <div class="mentor-detail" style="display:flex;  ">
 <img style="margin-left:0px; margin-right:10px; border-radius: 100%; object-fit: cover;" src="{{mentor.link}}" height="{{mentor.ht}}" width="{{mentor.wt}}" />
- <a style="text-decoration:none; hover:background-color: yellow;" href="mailto:{{mentor.email}}">{{mentor.name}} <br> {{mentor.pos}}</a>
+ <a style="text-decoration:none;" href="mailto:{{mentor.email}}">{{mentor.name}} <br> {{mentor.pos}}</a>
     </div>
 {% endfor %}
 
@@ -359,7 +403,7 @@ I am thankful to my mentors for their invaluable guidance and support throught m
 {% for mentor in site.data.people.me %}
  <div class="mentor-detail" style="display:flex; ">
 <img style="margin-left:0px; margin-right:10px; border-radius: 100%; object-fit: cover;" src="{{mentor.link}}" height="{{mentor.ht}}" width="{{mentor.wt}}" />
- <a style="text-decoration:none; hover:background-color: yellow;" href="mailto:{{mentor.email}}">{{mentor.name}} <br> {{mentor.pos}}</a>
+ <a style="text-decoration:none;" >{{mentor.name}} <br> {{mentor.pos}}</a>
     </div>
 {% endfor %}
 - Feel free to send me a mail at <a href="mailto:indrarahul2018@gmail.com">indrarahul2018@gmail.com</a>
