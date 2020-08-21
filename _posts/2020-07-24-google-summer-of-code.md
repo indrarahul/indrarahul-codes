@@ -5,9 +5,9 @@ layout: post
 ---
 
 <img src="/assets/img/cern/gsoc_cern.png"/>
-The project aims to develop an intelligent and reliable monitoring system for large distributed services to monitor their status and reduce operational costs. The distributed computing infrastructure is the backbone of all computing activities of the CMS experiments at CERN. These distributed services include central services for authentication, workload management, data management, databases, etc.
+The project aims to develop an intelligent and reliable monitoring system for large distributed services, in order to monitor their status and reduce operational costs. The distributed computing infrastructure is the backbone of all computing activities of the CMS experiments at CERN. These distributed services include central services for authentication, workload management, data management, databases, etc.
 
-Very large amounts of information are produced from this infrastructure. These include various anomalies, issues, outages, and those involving scheduled maintenance. The sheer volume and variety of information make it too large to be handled by the operational team. Hence we aim to build an intelligent system that will detect, analyze and predict the abnormal behaviors of the infrastructure.
+Very large amounts of information are produced from this infrastructure. These include various anomalies, issues, outages, and those involving scheduled maintenance. The sheer volume and variety of information makes it too large to be handled by the operational team. Hence we aim to build an intelligent system that will detect, analyze and predict the abnormal behaviors of the infrastructure.
 
 Quick Links :-
 
@@ -41,7 +41,7 @@ CMS infrastructure can produce significant amount of data on :-
 
 The operational teams deal with a large amount of alert notifications and tickets and generally they face difficulties in handling them manually. 
 
-So, in short we need to automate the mundane process which allows op-teams to focus more on the finding solution for the source of alerts rather than searching, filtering and collecting the alerts and tickets.
+So, in short, we need to automate the mundane process which allows op-teams to focus more on finding solutions for the source of alerts rather than searching, filtering and collecting the alerts and tickets.
 
 ## Solution
 We propose an intelligent alert management system for the aforementioned problem.
@@ -55,10 +55,10 @@ Aims
 - automate operation procedures
 
 The system’s abilities include, but are not limited to :-
-- Consuming tickets from various ticketing systems. (GGUS & SSB have been implemented).But being a modular architecture, there’s always a scope to add more services in future.
-- Extracting alerts which are relevant to the specific CMS services which gets affected by such interventions.
-- Intelligently grouping and ranking of the alerts.
-- Silencing false alerts from services which starts bombarding the system when a node goes down. So instead of logging multiple alerts from the services running on that node. We generate one single alert annotating that a specific node is down.
+- Consuming tickets from various ticketing systems. (GGUS & SSB have been implemented). It is to be noted that being a modular architecture, there’s always a scope to add more services in future.
+- Extracting alerts relevant to the specific CMS services which get affected by such interventions.
+- Intelligent grouping and ranking of the alerts.
+- Silencing false alerts that start bombarding the system when a node goes down. So instead of logging multiple alerts from the services running on that node, we generate one single alert annotating that a specific node is down.
 - Making them visible in the monitoring tools such as Grafana, Slack, Karma etc.
 
 ## Proposed Architecture
@@ -85,11 +85,11 @@ Third-party tools being used are :-
 - Slack
 - Karma
 
-Each developed components are the building blocks of the intelligent system. Let us discuss their implementation, features one by one.
+All of these components been developed, are building blocks of the intelligent system. Let us discuss their implementation and features one by one.
 
 ## Parsers
 
-AlertManager is an extensive tool for storing alerts from various sources. Prometheus, Grafana are the two most supported tools for AlertManager where you can simply define alert rules and then you are good to go. Ticketing systems such as GGUS, SSB have their own dedicated platform for issueing tickets. These tickets give an insight to the operational teams to make important decisions when outages happen which means we would want them in the AlertManager. There were no solutions than using AlertManager API endpoints which give access to CRUD operations.
+AlertManager is an extensive tool for storing alerts from various sources. Prometheus, Grafana are the two most supported tools for AlertManager where you can simply define alert rules and you are good to go. Ticketing systems such as GGUS, SSB have their own dedicated platform for issueing tickets. These tickets provide useful insights to the operational teams to make important decisions when outages happen, therefore we would want them in the AlertManager. So far, there were no solutions other than using AlertManager API endpoints which give access to CRUD operations.
 
 ### GGUS
 
@@ -98,7 +98,7 @@ AlertManager is an extensive tool for storing alerts from various sources. Prome
 <span>GGUS parser diagram</span>
 </div>
 
-GGUS Ticketing System web platform outputs data either in XML or CSV formats but Alertmanager requires data to be in specific JSON format. Thus, we developed a parser which is capable of parsing both formats which is configurable. 
+GGUS Ticketing System web platform outputs data either in XML or CSV formats but Alertmanager requires data to be in specific JSON format. Hence, we developed a configurable parser which is capable of parsing both formats. 
 
 ggus_parser has two components :-
 - parse - parses the XML or CSV data from the GGUS Ticketing System web platform
@@ -139,15 +139,15 @@ Above is a ticket in CSV format which is parsed and converted into...
 
 What about SSB Ticketing System then?
 
-There was no need of parser for SSB Ticketing System. monit tool was already developed by CMS team. It queries InfluxDB/ES data sources in MONIT via Grafana proxy. The SSB alerts in JSON format is printed on std output. We piped stdout to .json file and saved it to the disk. This fulfills the goal of the parser.
+There was no need of parser for SSB Ticketing System. monit tool was already developed by CMS team. It queries InfluxDB/ES data sources in MONIT via Grafana proxy. The SSB alerts in JSON format are printed on std output. We piped stdout to a .json file and saved it to the disk. This fulfills the goal of the parser.
 
 Ref :- <a target="_blank" href="https://github.com/dmwm/CMSMonitoring/blob/master/src/go/MONIT/monit.go">monit</a>
 
-Below is an example of such query.
+Below is an example of such a query.
 
 `monit -query=$query -dbname=$dbname -token=$token -dbid=$dbid > ssb_data.json`
 
-So far we have developed parser and found a way to convert both GGUS & SSB alerts in JSON files. But still we are far away from ingesting them to AlertManager. Let's see how we are doing it, shall we? 
+So far we have developed the parser and found a way to convert both GGUS & SSB alerts to JSON files. But still we are far away from ingesting them to AlertManager. Let's see how we are doing it. 
 
 ## Alerting Module
 <br>
@@ -180,12 +180,12 @@ Let's discuss each block the alerting module is made up of.
 - get
   - few GGUS/SSB alerts do not have Ending Time, that means it will need to be handled gracefully when they are resolved. So we automate the process of deleting those alerts from AlertManager when they are resolved at the origin.
   - fetches GGUS/SSB alerts from AlertManager.
-  - now each fetched alert are checked if it is present in the HashMap (we created in fetch method). If available that means it hasn't been resolved yet. If it is not present in the Hashmap we deduce that the alert has been resolved and no need to keep it in the AlertManager. 
+  - now each fetched alert is checked to see if it is present in the HashMap (which we created in fetch method). If it's available that means it hasn't been resolved yet. If it is not present in the Hashmap we deduce that the alert has been resolved and there's no need to keep it in the AlertManager. 
   - bundles all resolved alerts.
 
 - delete
-  - all resolved alerts will now have End Time equals to present time.
-  - all open ending alerts in AlertManager get new End Time which basically means they are deleted immediately.
+  - all resolved alerts will now have End Time equal to present time.
+  - all open ending alerts in AlertManager get new End Time, i.e., they are deleted immediately.
 
 ## Alerting Service 
 <br>
@@ -194,9 +194,9 @@ Let's discuss each block the alerting module is made up of.
 <span>Alerting Service diagram</span>
 </div>
 
-Now we are familiar with the parser, alerting module and their functionalities. We will know integrate them to create an alerting service.
+Now we are familiar with the parser, alerting module and their functionalities. We will now integrate them to create an alerting service.
 
-- Parser fetches data and saves to disk
+- Parser fetches data and saves it to disk
 - Alerting module gets fetched data as input, converts it and pushes to AM.
 - This whole process is bundled as a Linux Service with three commands :-
     - start
@@ -230,8 +230,8 @@ Configuration
 <span>Diagram showing various sources pushing alerts to AM and admins interacting with AM with various tools.</span>
 </div>
 
-Alerting services which have been developed push GGUS & SSB alerts to AM at defined time interval.
-Grafana & Prometheus push their alerts to AlertManager as well. AlertManager gives loads of features to handle alerts but it lacks proper UI. So, Karma Dashboard is used to fetch all alerts from AlertManager, and display them in nice and beautiful UI. Slack channels are configured to log alerts when they are fired in AlertManager. 
+Alerting services which have been developed push GGUS & SSB alerts to AM at defined time intervals.
+Grafana & Prometheus push their alerts to AlertManager as well. AlertManager gives loads of features to handle alerts but it lacks proper UI. So, Karma Dashboard is used to fetch all alerts from AlertManager, and display them in a decent UI. Slack channels are configured to log alerts when they are fired in AlertManager. 
 
 AlertManager, Slack and Karma give all required info for alerts to our Operational teams.
 
@@ -255,7 +255,7 @@ AlertManager, Slack and Karma give all required info for alerts to our Operation
 #### Karma
 - A dashboard which pulls all alerts from AlertManager.
 - Availability of multi grids arrangement based on filters.
-- Concise and better view than AlertManager.
+- More concise and better view than AlertManager.
 - Wrote Dockerfile and Kubernetes config files.
 
 <div style="display: flex; flex-direction: column; align-items: center;">
@@ -290,12 +290,12 @@ AlertManager, Slack and Karma give all required info for alerts to our Operation
 <br>
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/amTools/alert_tool3.png" alt="drawing"/>
-<span>Alert CLI Tool printing a specific alert in details.</span>
+<span>Alert CLI Tool printing a specific alert in detail.</span>
 </div>
 <br>
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/amTools/alert_tool4.png" alt="drawing"/>
-<span>Alert CLI Tool printing a specific alert in details in json format.</span>
+<span>Alert CLI Tool printing a specific alert in detail in json format.</span>
 </div>
 
 ## Intelligence Module
@@ -305,7 +305,7 @@ AlertManager, Slack and Karma give all required info for alerts to our Operation
 <span>Intelligence module diagram</span>
 </div>
 
-It is a data pipeline. Each components are independent of each other. One component receives the data, adds its logic and forwards the processed data to other component.
+It is a data pipeline. All components are independent of each other. One component receives the data, adds its logic and forwards the processed data to another component.
 
 Why data pipeline ?
 - Low coupling
@@ -315,9 +315,9 @@ Why data pipeline ?
 What it does ?
 - assigns proper severity levels to SSB/GGUS alerts which helps operators to understand the criticality of the infrastructure.
 Ex. If Number of Alerts with severity=”urgent” > some threshold, then the infrastructure is in critical situation.
-- annotates Grafana Dashboards when Network or Database interventions.
-- predicts type of alerts and groups similar alerts with the help of Machine Learning.
-- adds applicable tutorial/instructions doc to alert, on following which an operator can solve the issue quickly.
+- annotates Grafana Dashboards when there are Network or Database interventions.
+- predicts the type of alerts and groups similar alerts with the help of Machine Learning.
+- adds applicable tutorial/instructions doc to alert, following which an operator can solve the issue quickly.
 - deletes old silences for those alerts which have open ending (such as GGUS alerts and some SSB alerts having no End time).
 
 #### Building Blocks
@@ -342,7 +342,7 @@ Ex. If Number of Alerts with severity=”urgent” > some threshold, then the in
 </div>
 
 - fetches all alerts from AlertManager
-- bundles them and put them on a channel.
+- bundles them and puts them on a channel.
 - channel (Analogy) - baggage belt at Airports. You put data into it, data will be picked up when required by other party.
 
 #### Preprocessing
@@ -375,7 +375,7 @@ Ex. If Number of Alerts with severity=”urgent” > some threshold, then the in
 <span>Add Annotations diagram</span>
 </div>
 
-- Grafana has dashboards which shows running services’ metrics in the form of graphs.
+- Grafana has dashboards which shows metrics of running services in the form of graphs.
 - Grafana has add Annotation feature.
 - SSB alert mentioning intervention in network / DB affects these services.
 - pushes such interventions info in the form of annotations into Grafana dashboards.
@@ -417,7 +417,7 @@ Ex. If Number of Alerts with severity=”urgent” > some threshold, then the in
 
 - Evaluation of ElastAlert for setting alerts on ElasticSearch and integration of the same in this project.
 - Service which takes configuration for operator’s actions and pushes to AM so that it matches alerts with the actions.
-- Use of Machine Learning in intelligence module which will predict it’s severity info, priority and type.
+- Use of Machine Learning in intelligence module which will predict its severity info, priority and type.
 - Deployment of finalized project to k8s infrastructure. -->
 
 ## Tools Used
@@ -448,7 +448,7 @@ Ex. If Number of Alerts with severity=”urgent” > some threshold, then the in
 
 ## Acknowledgements
 
-I am thankful to my mentors for their invaluable guidance and support throught my GSoC journey.
+I am thankful to my mentors for their invaluable guidance and support throughout my GSoC journey.
 
 ### Mentor details
 
@@ -469,3 +469,4 @@ I am thankful to my mentors for their invaluable guidance and support throught m
 - Feel free to send me a mail at <a href="mailto:indrarahul2018@gmail.com">indrarahul2018@gmail.com</a>
 - Raise issues if any at:
   - <a target="_blank" href="https://github.com/dmwm/CMSMonitoring">CMSMonitoring</a>
+  
