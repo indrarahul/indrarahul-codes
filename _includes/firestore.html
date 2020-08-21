@@ -1,0 +1,61 @@
+<script type="text/javascript">
+  (function () {
+    const firebaseConfig = {
+      apiKey: "AIzaSyAmS2xkbdjWdR1wgg_VbPglVm-ijngV5K8",
+      authDomain: "my-website-27d6b.firebaseapp.com",
+      databaseURL: "https://my-website-27d6b.firebaseio.com",
+      projectId: "my-website-27d6b",
+      storageBucket: "my-website-27d6b.appspot.com",
+      messagingSenderId: "1046948300270",
+      appId: "1:1046948300270:web:bff2c522cfa8eeddc9faff",
+      measurementId: "G-GT9SLHYWNG",
+    };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    var docRef = db.collection("asauces").doc("ZoalWNiIjmsS8iDVbNXI");
+
+    
+    var push_to_firebase = function () {
+      var currentVal = 0
+     
+      docRef
+        .get()
+        .then(function (doc) {
+          if (doc.exists) {
+              currentVal = doc.data()["asauces"];
+            docRef.set({
+              asauces: currentVal + 1,
+            });
+            document.getElementById("asauces").innerHTML = currentVal+1;
+          } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+          }
+        })
+        .catch(function (error) {
+          console.log("Error getting document:", error);
+        });
+
+      
+    };
+
+    document
+      .getElementById("submit_asauces")
+      .addEventListener("click", push_to_firebase);
+
+    
+      docRef
+        .get()
+        .then(function (doc) {
+          if (doc.exists) {
+            document.getElementById("asauces").innerHTML = doc.data()["asauces"];
+          } else {
+            // doc.data() will be undefined in this case
+            console.log("No such document!");
+          }
+        })
+        .catch(function (error) {
+          console.log("Error getting document:", error);
+        });
+  })();
+</script>

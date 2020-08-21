@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-yamt (1.0.3)
+    indrarahul-codes (1.0.3)
       jekyll (~> 4.0)
       jekyll-feed (~> 0.13.0)
       jekyll-paginate (~> 1.1.0)
@@ -81,12 +81,12 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.1.4)
+  indrarahul-codes!
   jekyll
   jekyll-feed
   jekyll-paginate
   jekyll-seo-tag
   jekyll-sitemap
-  jekyll-yamt!
   rake (~> 12.0)
   wdm (>= 0.1.0)
 

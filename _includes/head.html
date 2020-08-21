@@ -1,37 +1,56 @@
-    <html lang="en-US">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="en-US">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>
-        {% if page.title == "Home" %}
-            {{ site.title }}
-        {% else %}
-            {{ page.title }}
-      {% endif %}
-    </title>
-    <meta name="description" content="
+  <title>
+    {% if page.title == "Home" %} {{ site.title }} {% else %} {{ page.title }}
+    {% endif %}
+  </title>
+  <meta
+    name="description"
+    content="
      {% if page.description %}{{ page.description }}
      {% else %}{{ site.description }}
-    {% endif %}">
+    {% endif %}"
+  />
 
-    <link rel="icon" href="{{"assets/favicon.ico" | relative_url }}" type="image/x-icon">
-    <link rel="shortcut icon" href="{{"assets/favicon.ico" | relative_url }}" type="image/x-icon">
+  <link rel="icon" href="{{"assets/favicon.ico" | relative_url }}"
+  type="image/x-icon"> <link rel="shortcut icon" href="{{"assets/favicon.ico" |
+  relative_url }}" type="image/x-icon">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}">
-    <link rel="stylesheet" href="{{ "/assets/css/syntax.css" | relative_url }}">
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ "/assets/css/main.css" | relative_url }}">
+  <link rel="stylesheet" href="{{ "/assets/css/syntax.css" | relative_url }}">
 
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+  <!-- Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+  />
 
-    <!-- Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=PT+Serif&display=swap">
+  <!-- Fonts -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=PT+Serif&display=swap"
+  />
 
-    <!-- SEO Plugin -->
-    {% seo %}
+  <!-- SEO Plugin -->
+  {% seo %}
 
-    <!-- Google Analytics -->
-    {% if site.data.settings.analytics-id%}
-        {%- include analytics.html -%}
-    {% endif %}
-    <!-- End Google Analytics -->
+  <!-- Google Analytics -->
+  {% if site.data.settings.analytics-id%} {%- include analytics.html -%} {%
+  endif %}
+  <!-- End Google Analytics -->
+
+  <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.2.4/firebase-firestore.js"></script>
+  <link
+    href="https://unpkg.com/webkul-micron@1.1.6/dist/css/micron.min.css"
+    type="text/css"
+    rel="stylesheet"
+  />
+  <script
+    src="https://unpkg.com/webkul-micron@1.1.6/dist/script/micron.min.js"
+    type="text/javascript"
+  ></script>
+</html>

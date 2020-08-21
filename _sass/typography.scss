@@ -24,6 +24,7 @@
 }
 
 h1, h2, h3, h4, h5, h6{
+    letter-spacing: 0.3px;
     font-family: 'Montserrat', sans-serif;
     margin-bottom: 10px;
     text-decoration: none;
@@ -36,10 +37,12 @@ h1, h2, h3, h4, h5, h6{
 }
 
 p, ul, ol{
+    letter-spacing: 0.3px;
     font-family: 'helvNeuL', serif;
     li{
+      letter-spacing: 0.3px;
       font-family: 'helvNeuL', serif;
-      font-size: 1.15rem;
+      font-size: 1.2rem;
     }
 }
 
@@ -58,7 +61,7 @@ h5{
 }
 
 p{
-    font-size: 1.15rem;
+    font-size: 1.2rem;
 }
 
 a{
@@ -68,4 +71,6 @@ a{
 span {
     font-family: 'helvNeuL', serif;
     color: grey;
+    letter-spacing: 0.3px;
+    font-size: 1.2rem;
 }

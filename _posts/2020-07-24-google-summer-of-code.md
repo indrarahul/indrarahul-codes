@@ -2,18 +2,19 @@
 main_title: GSOC'20 with CERN-HSF !
 title: Intelligent Alert system for HEP experiments
 layout: post
-categories: [GSOC, Intelligent Alert System, golang]
-description: "Google Summer of Code 2020"
 ---
 
 <img src="/assets/img/cern/gsoc_cern.png"/>
-<h3>Will Write some information about the project</h3>
+The project aims to develop an intelligent and reliable monitoring system for large distributed services to monitor their status and reduce operational costs. The distributed computing infrastructure is the backbone of all computing activities of the CMS experiments at CERN. These distributed services include central services for authentication, workload management, data management, databases, etc.
+
+Very large amounts of information are produced from this infrastructure. These include various anomalies, issues, outages, and those involving scheduled maintenance. The sheer volume and variety of information make it too large to be handled by the operational team. Hence we aim to build an intelligent system that will detect, analyze and predict the abnormal behaviors of the infrastructure.
 
 Quick Links :-
 
 <div class="lnk" style="display:flex;">
-<a style="margin-right:10px; text-decoration:none;" target="_blank" href="https://github.com/dmwm/CMSMonitoring">CMSMonitoring</a> <br>
-<a style="margin-right:10px; text-decoration:none;" target="_blank" href="https://docs.google.com/document/d/1ATRWZLzsexHgdx73_PFwNGIUrUaudskSJ-FYnyZOHHw/edit?usp=sharing">GSOC Progress Report</a>
+{% for l in site.data.social.links %}
+<div><a style="margin-right:10px; text-decoration:none;" target="_blank" href="{{l.link}}">{{l.name}}</a></div>
+{% endfor %}
 </div>
 
 * hello
@@ -21,9 +22,9 @@ Quick Links :-
 
 ## Problem
 
-The growth of distributed services introduces a challenge to properly monitor their status and reduce operational costs.”
+"The growth of distributed services introduces a challenge to properly monitor their status and reduce operational costs.”
 
-Tools in use :-
+The current monitoring system makes use of following tools :-
 - ElasticSearch
 - Kafka
 - Grafana
@@ -38,26 +39,27 @@ CMS infrastructure can produce significant amount of data on :-
 - outages
 - scheduled maintenance.
 
-So, in short our operational teams deal with a large amount of alert notifications and tickets !
+The operational teams deal with a large amount of alert notifications and tickets and generally they face difficulties in handling them manually. 
+
+So, in short we need to automate the mundane process which allows op-teams to focus more on the finding solution for the source of alerts rather than searching, filtering and collecting the alerts and tickets.
 
 ## Solution
+We propose an intelligent alert management system for the aforementioned problem.
 
-An intelligent Alert Management System
+Aims
 
-Aim
-
-- detect
-- analyse
-- spot anomalies
+- detect tickets
+- analyse tickets
+- spot anomalies in tickets (if any)
 - silence false alerts
 - automate operation procedures
 
 The system’s abilities include, but are not limited to :-
-- Consuming tickets from various ticketing systems. (GGUS & SSB have been implemented). Being modular architecture, there’s always a scope to add more services in future.
-- Extracting alerts, relevant to the specific CMS services which gets affected by such interventions
-- Intelligently grouping and ranking those alerts.
-- Silencing false alerts.
-- Making them visible in our monitoring tools (Grafana, Slack, Karma etc.).
+- Consuming tickets from various ticketing systems. (GGUS & SSB have been implemented).But being a modular architecture, there’s always a scope to add more services in future.
+- Extracting alerts which are relevant to the specific CMS services which gets affected by such interventions.
+- Intelligently grouping and ranking of the alerts.
+- Silencing false alerts from services which starts bombarding the system when a node goes down. So instead of logging multiple alerts from the services running on that node. We generate one single alert annotating that a specific node is down.
+- Making them visible in the monitoring tools such as Grafana, Slack, Karma etc.
 
 ## Proposed Architecture
 
@@ -66,15 +68,16 @@ The system’s abilities include, but are not limited to :-
 <span>Full Architecture</span>
 </div>
 
-Components Developed
+The above diagram depicts the proposed architecture of the Intelligent Alert Management System.
 
+The components which I developed are :-
 - Parser
 - Alerting Module
 - Alerting Service
 - Intelligence Module
 - Alert CLI Tool
 
-Tools
+Third-party tools being used are :-
 
 - Grafana
 - Prometheus
@@ -82,7 +85,11 @@ Tools
 - Slack
 - Karma
 
+Each developed components are the building blocks of the intelligent system. Let us discuss their implementation, features one by one.
+
 ## Parsers
+
+AlertManager is an extensive tool for storing alerts from various sources. Prometheus, Grafana are the two most supported tools for AlertManager where you can simply define alert rules and then you are good to go. Ticketing systems such as GGUS, SSB have their own dedicated platform for issueing tickets. These tickets give an insight to the operational teams to make important decisions when outages happen which means we would want them in the AlertManager. There were no solutions than using AlertManager API endpoints which give access to CRUD operations.
 
 ### GGUS
 
@@ -91,20 +98,22 @@ Tools
 <span>GGUS parser diagram</span>
 </div>
 
-GGUS Ticketing System outputs data either in XML or CSV. Developed Parser capable of parsing both formats.
-ggus_parser has  two components :-
-- parse - parses the XML or CSV data
-- convert - converts the parsed data into JSON format and saves it to disk.
-- XML/CSV formats are configurable
+GGUS Ticketing System web platform outputs data either in XML or CSV formats but Alertmanager requires data to be in specific JSON format. Thus, we developed a parser which is capable of parsing both formats which is configurable. 
+
+ggus_parser has two components :-
+- parse - parses the XML or CSV data from the GGUS Ticketing System web platform
+- convert - converts the parsed data into JSON format and saves it to the disk.
+
+Let's see an example 
 
 *GGUS Ticket (csv)*
 ```CSV
 Ticket-ID,Type,VO,Site,Priority,Resp. Unit,Status,Last Update,Subject,Scope
 147196,USER,cms,FZK-LCG2,urgent,NGI_DE,assigned,2020-07-14,FZK-LCG2: issues on data access,WLCG
 ```
-Which is Parsed and Converted into …..
+Above is a ticket in CSV format which is parsed and converted into...
 
-GGUS Parsed Ticket (JSON)
+*GGUS Parsed Ticket (JSON)*
 
 ```json
 {
@@ -125,27 +134,29 @@ GGUS Parsed Ticket (JSON)
 
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/monit.png" alt="drawing" width="300"/>
-<span>Hello</span>
+<span>SSB parser diagram</span>
 </div>
 
-What about SSB Ticketing System ?
+What about SSB Ticketing System then?
 
-There was no need of parser for SSB Ticketing System. monit tool was developed by CMS. Query InfluxDB/ES data sources in MONIT via Grafana proxy SSB alerts in JSON format is given on standard output. We piped stdout to .json file and saved to disk.
+There was no need of parser for SSB Ticketing System. monit tool was already developed by CMS team. It queries InfluxDB/ES data sources in MONIT via Grafana proxy. The SSB alerts in JSON format is printed on std output. We piped stdout to .json file and saved it to the disk. This fulfills the goal of the parser.
 
 Ref :- <a target="_blank" href="https://github.com/dmwm/CMSMonitoring/blob/master/src/go/MONIT/monit.go">monit</a>
 
-**MONIT Query**
+Below is an example of such query.
 
 `monit -query=$query -dbname=$dbname -token=$token -dbid=$dbid > ssb_data.json`
+
+So far we have developed parser and found a way to convert both GGUS & SSB alerts in JSON files. But still we are far away from ingesting them to AlertManager. Let's see how we are doing it, shall we? 
 
 ## Alerting Module
 <br>
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/alert_mod.png" alt="drawing" width="400"/>
-<span>Hello</span>
+<span>Alerting module diagram</span>
 </div>
 
-Components Developed
+#### Building Blocks
 - fetch
 - convert
 - post
@@ -154,31 +165,36 @@ Components Developed
 
 <span style="color:red">\*now onwards we will call each ticket from GGUS/SSB as an alert</span>
 
+Let's discuss each block the alerting module is made up of.
 - fetch
-  - fetches saved JSON GGUS or SSB data from the disk (ggus_parser or monit)
-  - maintains a hashmap for seen alerts
-  - map[alert_name] = alert
+  - fetches saved JSON GGUS or SSB data from the disk (ggus_parser or monit).
+  - maintains a hashmap for last seen alerts so that in future we ignore them to avoid multiple copies. Hashmap is a key, value data structure with fast lookup operation. Here key is alertname and value is the alert data.
+
 - convert
-  - fetched alerts are input here
-  - gets converted to JSON data which AlertManager API understands
+  - fetched alerts are ingested here.
+  - those alerts get converted to JSON data which AlertManager API understands.
+
 - post
-  - converted JSON data which contains GGUS/SSB alerts is pushed to AlertManager.
+  - converted JSON data which contains GGUS/SSB alerts is pushed to AlertManager through AlertManager API endpoints.
+
 - get
-  - Few GGUS/SSB alerts do not have Ending Time, hence open ending.
-  - We fetch GGUS/SSB alerts from AlertManager
-  - Check with HashMap (which updates), if an alert is resolved or not.
-  - Bundle all resolved alerts
+  - few GGUS/SSB alerts do not have Ending Time, that means it will need to be handled gracefully when they are resolved. So we automate the process of deleting those alerts from AlertManager when they are resolved at the origin.
+  - fetches GGUS/SSB alerts from AlertManager.
+  - now each fetched alert are checked if it is present in the HashMap (we created in fetch method). If available that means it hasn't been resolved yet. If it is not present in the Hashmap we deduce that the alert has been resolved and no need to keep it in the AlertManager. 
+  - bundles all resolved alerts.
+
 - delete
-  - All resolved alerts will now have End Time == time.Now()
-  - All open ending alerts in AlertManager get new EndTime,
-  - thus get deleted
+  - all resolved alerts will now have End Time equals to present time.
+  - all open ending alerts in AlertManager get new End Time which basically means they are deleted immediately.
 
 ## Alerting Service 
 <br>
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/alert_srv.png" alt="drawing" width="400"/>
-<span>Hello</span>
+<span>Alerting Service diagram</span>
 </div>
+
+Now we are familiar with the parser, alerting module and their functionalities. We will know integrate them to create an alerting service.
 
 - Parser fetches data and saves to disk
 - Alerting module gets fetched data as input, converts it and pushes to AM.
@@ -211,56 +227,100 @@ Configuration
 <br>
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/am.png" alt="drawing" width="300"/>
-<span>Hello</span>
+<span>Diagram showing various sources pushing alerts to AM and admins interacting with AM with various tools.</span>
 </div>
 
-Alerting services which has been developed push GGUS & SSB alerts to AM at defined time interval.
-Grafana & Prometheus push their alerts to AM as well.
-Karma Dashboard fetches all alerts from AM, and displays in better format.
-Slack channels are populated when an alert is fired.
-AM, Slack and Karma give all required info for alerts to our Admins.
+Alerting services which have been developed push GGUS & SSB alerts to AM at defined time interval.
+Grafana & Prometheus push their alerts to AlertManager as well. AlertManager gives loads of features to handle alerts but it lacks proper UI. So, Karma Dashboard is used to fetch all alerts from AlertManager, and display them in nice and beautiful UI. Slack channels are configured to log alerts when they are fired in AlertManager. 
 
-## Use of Slack & Karma
+AlertManager, Slack and Karma give all required info for alerts to our Operational teams.
+
+## Use of Slack, Karma and Alert CLI Tool
 
 #### Slack
-Slack has defined channels for particular service alerts.
-Users are notified about fired alerts.
-AlertManager bots are at work.
+- Slack has defined channels for particular service alerts.
+- Users are notified about fired alerts.
+- AlertManager bots are at work.
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/amTools/slack1.png" alt="drawing"/>
+<span>GGUS alerts in Slack</span>
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/amTools/slack2.png" alt="drawing"/>
+<span>SSB alerts in Slack</span>
+</div>
 
 #### Karma
-A dashboard which pulls all alerts from AM.
-Availability of multi grids arrangement based on filters.
-Bundling similar alerts
-Concise and better view than AM.
-Wrote Dockerfile and Kubernetes config files.
+- A dashboard which pulls all alerts from AlertManager.
+- Availability of multi grids arrangement based on filters.
+- Concise and better view than AlertManager.
+- Wrote Dockerfile and Kubernetes config files.
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/amTools/karma1.png" alt="drawing"/>
+<span>Karma Dashboard view-1</span>
+</div>
+<br>
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/amTools/karma2.png" alt="drawing"/>
+<span>Karma Dashboard view-2</span>
+</div>
+
+#### Alert CLI Tool
+
+- gives a nice and clean CLI interface for getting alerts, their details are printed on the terminal itself either in tabular form or JSON format.
+- convenient option for operators who prefer command line tools.
+- comes with several options such as :-
+  - service, severity, tag - Filters
+  - sort - Sorting
+  - details - For detailed information of an alert
+  - json - information in JSON format
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/amTools/alert_tool1.png" alt="drawing"/>
+<span>Alert CLI Tool printing all alerts in the alertmanager of type SSB services which are sorted over duration of each alert.</span>
+</div>
+<br>
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/amTools/alert_tool2.png" alt="drawing"/>
+<span>Alert CLI Tool printing all alerts in the alertmanager whose severity values are "high".</span>
+</div>
+<br>
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/amTools/alert_tool3.png" alt="drawing"/>
+<span>Alert CLI Tool printing a specific alert in details.</span>
+</div>
+<br>
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/amTools/alert_tool4.png" alt="drawing"/>
+<span>Alert CLI Tool printing a specific alert in details in json format.</span>
+</div>
 
 ## Intelligence Module
 <br>
 <div style="display: flex; flex-direction: column; align-items: center;">
-<img src="/assets/img/cern/int/int_mod.jpg" alt="drawing" width="400"/>
-<span>Hello</span>
+<img src="/assets/img/cern/int/int_mod.png" alt="drawing" width="400"/>
+<span>Intelligence module diagram</span>
 </div>
 
-A data pipeline.
-Components independent of each other.
-One component receives the data, adds its logic and forwards the processed data to other component.
+It is a data pipeline. Each components are independent of each other. One component receives the data, adds its logic and forwards the processed data to other component.
 
 Why data pipeline ?
-Low coupling
-Freedom of adding or removing components on demand.
-Power of concurrency
+- Low coupling
+- Freedom of adding or removing components on demand.
+- Power of concurrency
 
 What it does ?
-Assigning proper severity levels to SSB/GGUS alerts which helps operators to understand the criticality of the infrastructure.
+- assigns proper severity levels to SSB/GGUS alerts which helps operators to understand the criticality of the infrastructure.
 Ex. If Number of Alerts with severity=”urgent” > some threshold, then the infrastructure is in critical situation.
-Annotating Grafana Dashboards when Network or Database interventions.
+- annotates Grafana Dashboards when Network or Database interventions.
+- predicts type of alerts and groups similar alerts with the help of Machine Learning.
+- adds applicable tutorial/instructions doc to alert, on following which an operator can solve the issue quickly.
+- deletes old silences for those alerts which have open ending (such as GGUS alerts and some SSB alerts having no End time).
 
-Scope for additional features include, but are not limited to :-
-Predicting type of alerts and grouping similar alerts with the help of Machine Learning.
-Adds applicable tutorial/instructions doc to alert, on following which an operator can solve the issue.
-
-Components
-
+#### Building Blocks
 - Fetch Alerts
 - Preprocessing
 - Keyword Matching
@@ -268,9 +328,9 @@ Components
 - Machine Learning
 - Push Alert
 - Silence Alert
+- Delete Old Silences
 
-Tools
-
+#### Tools
 - AlertManager
 - Grafana
 
@@ -278,112 +338,112 @@ Tools
 
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/fetch_alerts.jpg" alt="drawing" width="250"/>
-<span>Hello</span>
+<span>Fetch Alerts diagram</span>
 </div>
 
-- Fetches all alerts from AlertManager
-- Bundles them and put them on a channel.
-- Channel (Analogy) - baggage belt at Airports. You put data into it, data will be picked up when required by other party.
+- fetches all alerts from AlertManager
+- bundles them and put them on a channel.
+- channel (Analogy) - baggage belt at Airports. You put data into it, data will be picked up when required by other party.
 
 #### Preprocessing
 
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/preprocessing.jpg" alt="drawing" width="450"/>
-<span>Hello</span>
+<span>Preprocessing diagram</span>
 </div>
 
-- Filtering based on configuration.
-- Only filtered alerts are forwarded.
-- Here we also manage one map for keeping track of active silenced alerts to avoid redundant silences.
-- If an alert is already silenced that means it has been processed by the intelligence module before.
+- filtering based on configuration.
+- only filtered alerts are forwarded.
+- we also manage one map for keeping track of active silenced alerts to avoid redundant silences.
+- if an alert is already silenced that means it has been processed by the intelligence module before.
 
 #### Keyword Matching
 
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/keyword_matching.png" alt="drawing" width="350"/>
-<span>Hello</span>
+<span>Keyword Matching diagram</span>
 </div>
 
-- Analysis of Alerts showed us repetitive use of a few important keywords.
-- These keywords help in assigning severity levels.
-- We search for these keywords in alerts, if found we assign severity level mapped to that keyword.
+- analysis of Alerts showed us repetitive use of a few important keywords.
+- these keywords help in assigning severity levels.
+- searches for these keywords in alerts, if found we assign severity level mapped to that keyword.
 
 #### Add Annotations
 
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/add_annotations.jpg" alt="drawing" width="350"/>
-<span>Hello</span>
+<span>Add Annotations diagram</span>
 </div>
 
 - Grafana has dashboards which shows running services’ metrics in the form of graphs.
 - Grafana has add Annotation feature.
 - SSB alert mentioning intervention in network / DB affects these services.
-- We push such interventions info in the form of annotations into Grafana dashboards.
-
-#### Machine Learning
+- pushes such interventions info in the form of annotations into Grafana dashboards.
 
 #### Push Alert 
 
 <div style="display: flex; flex-direction: column; align-items: center;">
 <img src="/assets/img/cern/int/push_alert.jpg" alt="drawing" width="400"/>
-<span>Hello</span>
+<span>Push Alert diagram</span>
 </div>
 
-- Alerts with modified information are pushed to AlertManager
-- Incoming alerts are then forwarded to Silence Alert.
+- alerts with modified information are pushed to AlertManager
+- incoming alerts are then forwarded to Silence Alert.
 
 #### Silence Alert 
 
 <div style="display: flex; flex-direction: column; align-items: center;">
-<img src="/assets/img/cern/int/silence_alert.jpg" alt="drawing" width="250"/>
-<span>Hello</span>
+<img src="/assets/img/cern/int/silence_alert.png" alt="drawing" width="400"/>
+<span>Silence Alert diagram</span>
 </div>
 
-- Alerts which get modified and pushed to AlertManager get copied.
-- Older alert is redundant
-- We silence the older one for the duration of its lifetime.
+- alerts which get modified and pushed to AlertManager get copied.
+- older alert is redundant
+- silences the older one for the duration of its lifetime.
 
-## Alert CLI Tool
+#### Delete Old Silences 
 
-- Gives a nice and clean CLI interface for getting alerts, their details printed on the terminal itself either in tabular form or JSON format.
-- Convenient option for operators who prefer command line
-- Comes with several options such as :-
-  - service, severity, tag - Filters
-  - sort - Sorting
-  - details - For detailed information of an alert
-  - json - information in JSON format
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="/assets/img/cern/int/delete_old_silences.png" alt="drawing" width="400"/>
+<span>Silence Alert diagram</span>
+</div>
 
-## Future Work
+- Alerts like GGUS & some SSB tickets have open ending time (That means we don't know for how long they will be in AM).
+- So we wait for those alerts to get resolved, whenever they are resolved they are deleted from the AM by alerting services.
+- But the silences will remain, right ? So, this component takes care of such cases. 
+- It delete those silences which get resolved.
+
+<!-- ## Future Work
 
 - Evaluation of ElastAlert for setting alerts on ElasticSearch and integration of the same in this project.
 - Service which takes configuration for operator’s actions and pushes to AM so that it matches alerts with the actions.
 - Use of Machine Learning in intelligence module which will predict it’s severity info, priority and type.
-- Deployment of finalized project to k8s infrastructure.
+- Deployment of finalized project to k8s infrastructure. -->
 
 ## Tools Used
 
 - Programming Language
 
-  <img style="margin-left:0px;" src="https://img.icons8.com/color/48/000000/golang.png"/>
+  <img style="margin-left:0px;" src="/assets/img/cern/logo/golang.png"/>
 
 - Editor
 
     <div style="display:flex;">
-    <img style="margin-left:0px; margin-right:10px;"  src="https://upload.wikimedia.org/wikipedia/commons/9/9f/Vimlogo.svg" width="48px"/>
-    <img style="margin-left:0px; margin-right:10px;"  src="https://img.icons8.com/fluent/48/000000/visual-studio-code-2019.png"/>
+    <img style="margin-left:0px; margin-right:10px;"  src="/assets/img/cern/logo/vim.svg" width="48px"/>
+    <img style="margin-left:0px; margin-right:10px;"  src="/assets/img/cern/logo/vccode.png" />
     </div>
 
 - Helper Tools
 
     <div style="display:flex;">
-    <img style="margin-left:0px; margin-right:10px;"  src="https://img.icons8.com/color/48/000000/github.png"/>
-    <img style="margin-left:0px; margin-right:10px;"  src="https://img.icons8.com/color/48/000000/git.png"/>
-    <img style="margin-left:0px; margin-right:10px;"  src="http://networkbit.ch/wp-content/uploads/2018/12/golang_lint-300x112.png" width="130px"/>
+    <img style="margin-left:0px; margin-right:10px;"  src="/assets/img/cern/logo/github.png" />
+    <img style="margin-left:0px; margin-right:10px;"  src="/assets/img/cern/logo/git.png"/>
+    <img style="margin-left:0px; margin-right:10px;"  src="/assets/img/cern/logo/golint.png" width="130px"/>
     </div>
     <div style="display:flex;">
-    <img style="margin-left:0px; margin-right:10px;"  src="https://img.icons8.com/color/48/000000/adobe-photoshop.png"/>
-    <img style="margin-left:0px; margin-right:10px;"  src="https://img.icons8.com/color/48/000000/google-docs.png"/>
-    <img style="margin-left:0px; margin-right:10px;"  src="https://img.icons8.com/color/48/000000/google-slides.png"/>
+    <img style="margin-left:0px; margin-right:10px;"  src="/assets/img/cern/logo/ps.png"/>
+    <img style="margin-left:0px; margin-right:10px;"  src="/assets/img/cern/logo/gdocs.png"/>
+    <img style="margin-left:0px; margin-right:10px;"  src="/assets/img/cern/logo/gslides.png"/>
     </div>
 
 ## Acknowledgements

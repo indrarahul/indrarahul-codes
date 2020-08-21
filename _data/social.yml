@@ -9,3 +9,8 @@ social:
 
   - {icon: 'https://img.icons8.com/fluent/48/000000/gmail.png', link: 'mailto:indrarahul2013@gmail.com'}
   - {icon: 'https://img.icons8.com/color/48/000000/rss.png', link: "/feed.xml"}
+
+links :
+  - {link: 'https://summerofcode.withgoogle.com/projects/#4648545665155072', name: 'GSOC' }
+  - {link: 'https://github.com/dmwm/CMSMonitoring', name: 'CMSMonitoring' }
+  - {link: 'https://docs.google.com/document/d/1ATRWZLzsexHgdx73_PFwNGIUrUaudskSJ-FYnyZOHHw/edit?usp=sharing', name: 'GSOC Progress Report' }
